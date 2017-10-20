@@ -13,20 +13,6 @@ public class HorizontalPipeline {
     private double length;
     private double roughness;
     private double sumLocalResist;
-    /* Материал труб
-    * 0 - Новые стальные без внутреннего защитного покрытия или с битумным защитным покрытием
-    * 1 - Новые чугунные без внутреннего защитного покрытия или с битумным защитным покрытием
-    * 2 - Неновые стальные и неновые чугунные без внутреннего защитного покрытия или с битумным защитным покр., v < 1.2м/c
-    * 3 - Неновые стальные и неновые чугунные без внутреннего защитного покрытия или с битумным защитным покр., v > 1.2м/c
-    * 4 - Асбестоцементные
-    * 5 - Железобетонные виброгидропрессованные
-    * 6 - Железобетонные центрифугированные
-    * 7 - Стальные и чугунные с внутр. пластмассовым или полимерцементным покр., нанесенным методом центрифугирования
-    * 8 - Стальные и чугунные с внутр. цементно-песчаным покр., нанесенным методом набрызга с последующим заглаживанием
-    * 9 - Стальные и чугунные с внутр. цементно-песчаным покр., нанесенным методом  центрифугирования
-    * 10 - Пластмассовые
-    * 11   Стеклянные
-    */
     private int material = -1;
     /**
      * Свойства материала
@@ -63,6 +49,16 @@ public class HorizontalPipeline {
     private double pipelineResistance;
     private double hydraulicResistance;
 
+    /**
+     * Проведение расчёта по формулам теоретической гидравлики
+     * @param consumption Расход воды через трубопровод, т/ч
+     * @param tempIn Температура воды на входе, градусов цельсия
+     * @param tempOut Температура воды на выходе, градусов цельсия
+     * @param diameter Внутренний диаметр трубопровода, мм
+     * @param length Длина трубопровода, м
+     * @param roughness Экв. шероховатость внутр. поверхностей труб, мм
+     * @param sumLocalResist Сумма к-тов местных сопротивлений
+     */
     public HorizontalPipeline(double consumption, double tempIn, double tempOut, double diameter, double length, double roughness, double sumLocalResist) {
         this.consumption = consumption;
         this.tempIn = tempIn;
@@ -74,6 +70,27 @@ public class HorizontalPipeline {
         calcFormulas();
     }
 
+    /**
+     * Проведение расчёта по СНиП
+     * @param consumption Расход воды через трубопровод, т/ч
+     * @param tempIn Температура воды на входе, градусов цельсия
+     * @param tempOut Температура воды на выходе, градусов цельсия
+     * @param diameter Внутренний диаметр трубопровода, мм
+     * @param length Длина трубопровода, м
+     * @param material Материал труб:<br>
+     *       0 - Новые стальные без внутреннего защитного покрытия или с битумным защитным покрытием<br>
+     *       1 - Новые чугунные без внутреннего защитного покрытия или с битумным защитным покрытием<br>
+     *       2 - Неновые стальные и неновые чугунные без внутреннего защитного покрытия или с битумным защитным покр., v &lt; 1.2м/c<br>
+     *       3 - Неновые стальные и неновые чугунные без внутреннего защитного покрытия или с битумным защитным покр., v &gt; 1.2м/c<br>
+     *       4 - Асбестоцементные<br>
+     *       5 - Железобетонные виброгидропрессованные<br>
+     *       6 - Железобетонные центрифугированные<br>
+     *       7 - Стальные и чугунные с внутр. пластмассовым или полимерцементным покр., нанесенным методом центрифугирования<br>
+     *       8 - Стальные и чугунные с внутр. цементно-песчаным покр., нанесенным методом набрызга с последующим заглаживанием<br>
+     *       9 - Стальные и чугунные с внутр. цементно-песчаным покр., нанесенным методом  центрифугирования<br>
+     *      10 - Пластмассовые<br>
+     *      11 - Стеклянные
+     */
     public HorizontalPipeline(double consumption, double tempIn, double tempOut, double diameter, double length, int material) {
         this.consumption = consumption;
         this.tempIn = tempIn;
@@ -93,6 +110,9 @@ public class HorizontalPipeline {
         reynoldsNumber = ((speed * diameter) / viscosity) * 10;
     }
 
+    /**
+     * Провести расчёт по формулам теоретической гидравлики
+     */
     public void calcFormulas() {
         calcGeneric();
         if (reynoldsNumber <= 2320) {
@@ -112,6 +132,9 @@ public class HorizontalPipeline {
         pipelineResistance = pressureLossPa / pow(consumption, 2);
     }
 
+    /**
+     * Провести расчёт по СНиП
+     */
     public void calcSNiP() {
         calcGeneric();
         double[] material_prop = material_props[material];
@@ -120,34 +143,66 @@ public class HorizontalPipeline {
         pressureLossPa = pressureLossKgPerSm2 * 9.81 * 10000;
     }
 
+    /**
+     * Установить расход воды через трубопровод
+     * @param consumption Расход воды через трубопровод, т/ч
+     */
     public void setConsumption(double consumption) {
         this.consumption = consumption;
     }
 
+    /**
+     * Установить температуру воды на входе
+     * @param tempIn Температура воды на входе, градусов цельсия
+     */
     public void setTempIn(double tempIn) {
         this.tempIn = tempIn;
     }
 
+    /**
+     * Установить температуру воды на выходе
+     * @param tempOut Температура воды на выходе, градусов цельсия
+     */
     public void setTempOut(double tempOut) {
         this.tempOut = tempOut;
     }
 
+    /**
+     * Установить внутренний диаметр трубопровода
+     * @param diameter Внутренний диаметр трубопровода, мм
+     */
     public void setDiameter(double diameter) {
         this.diameter = diameter;
     }
 
+    /**
+     * Установить длину трубопровода
+     * @param length Длина трубопровода, м
+     */
     public void setLength(double length) {
         this.length = length;
     }
 
+    /**
+     * Установить экв. шероховатость внутр. поверхностей труб
+     * @param roughness Экв. шероховатость внутр. поверхностей труб, мм
+     */
     public void setRoughness(double roughness) {
         this.roughness = roughness;
     }
 
+    /**
+     * Установить сумму к-тов местных сопротивлений
+     * @param sumLocalResist Сумма к-тов местных сопротивлений
+     */
     public void setSumLocalResist(double sumLocalResist) {
         this.sumLocalResist = sumLocalResist;
     }
 
+    /**
+     * Установить матриал труб
+     * @param material Материал труб:
+     */
     public void setMaterial(int material) {
         this.material = material;
     }

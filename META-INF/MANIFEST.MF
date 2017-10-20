@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: net/tavda/hydraulic
+Specification-Title: "Hydraulic Pipelines Calculation"
+Specification-Version: "0.1"
+Specification-Vendor: "Tavda.net"

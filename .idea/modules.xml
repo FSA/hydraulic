@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HydraulicCalculation.iml" filepath="$PROJECT_DIR$/HydraulicCalculation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hydraulic.iml" filepath="$PROJECT_DIR$/hydraulic.iml" />
     </modules>
   </component>
 </project>

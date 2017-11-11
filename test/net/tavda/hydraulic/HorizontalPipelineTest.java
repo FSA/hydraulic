@@ -98,7 +98,8 @@ public class HorizontalPipelineTest {
         assertEquals(formula.getPipelineResistance(), 23.816278311334074, 0.0);
     }
 
+    @Test
     public void getHydraulicResistance() {
-        assertEquals(snip.getHydraulicResistance(),0.08,0.01);
+        assertEquals(snip.getHydraulicResistance(),0.008,0.001);
     }
 }

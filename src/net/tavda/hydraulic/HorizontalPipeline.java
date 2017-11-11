@@ -1,6 +1,7 @@
 package net.tavda.hydraulic;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.pow;
 
 /**
  * Гидравлический расчёт горизонтального участка трубопровода
